@@ -180,17 +180,13 @@ public class WrestlingScraper {
 		for(Element row : rows) {
 			db_field_name = matcher.match(row.child(0).text());
 			if (db_field_name != null) {
-//				row.child(1).select("br").append(",");
 				value = StringEscapeUtils.escapeHtml4(row.child(1).text());
 				sql_values += ", \"" + value + "\"";
 				sql_to_insert += ", `" + db_field_name + "`";
 			}
 		}
 		
-//		sql_values = String.replaceAll("\"" , "\\\"");
 		String sql = "INSERT INTO `wrestling`.`" + table + "` (" + sql_to_insert + ") VALUES (" + sql_values + ");";
-		// prepare stmt to excecute the sql and add the element to the table
-//		PreparedStatement stmt = null;
 		PreparedStatement stmt = db.conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		stmt.execute();
 	}
