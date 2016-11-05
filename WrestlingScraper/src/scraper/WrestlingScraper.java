@@ -125,55 +125,6 @@ public class WrestlingScraper {
 		}
 		
 		
-		/**
-		 * ADD the - Promotions - Data
-		 */
-		
-//		List<String> resultsPromotions = getLinksFromMultiSiteTable("http://www.cagematch.net/?id=8&view=promotions","&s=",100,1861);
-		
-//		List<String> resultsPromotions = new ArrayList<String>();
-//		resultsPromotions.add("http://www.cagematch.net/?id=8&nr=1");
-//		System.out.println(resultsPromotions.size());
-//		
-//		
-//		for(String link : resultsPromotions) {
-//			try {
-//				extractOverviewTableData(link, "Promotions", new MatcherPromotions());
-//			} catch (SQLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-		
-		/**
-		 * ADD the - Workers - Data
-		 */
-		
-//		MatcherWorkers m2 = new MatcherPromotions();
-//		System.out.println(m2.match("Height:"));
-//		
-//		try {
-//			Document document = Jsoup.connect("http://www.cagematch.net/?id=2&view=workers&s=0").get();
-//		} catch (IOException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//		
-		
-//		List<String> resultsWorkers = getLinksFromMultiSiteTable("http://www.cagematch.net/?id=2&view=workers","&s=",0 ,100,2500);
-//		
-//
-//		MatcherWorkers m = new MatcherWorkers();
-//		for(String link : resultsWorkers) {
-//			try {
-//				extractOverviewTableData(link, "Workers", m);
-//			} catch (SQLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-		
-		
 		
 		
 	}
