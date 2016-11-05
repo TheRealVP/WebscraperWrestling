@@ -21,18 +21,29 @@ import res.Matcher;
 import res.MatcherPromotions;
 import res.MatcherWorkers;
 
+
+/**
+ * The WestlingScraper scrapes the data from the website cagematch.net
+ * 
+ * The fetched data is stored in an sql db, which is specified in the DB.java class
+ *
+ * The Scraper doesn't have to fetch all the data at once, but can pick up at a point until where the db is filled. (very basic)
+ */
 public class WrestlingScraper {
 	private static DB db;
 	private static Matcher matcher;
-	private static HtmlToPlainText htmlPlain;
-	/*
+	private static HtmlToPlainText htmlPlain; // to convert html to plain text which can be added to the db
+	
+	/* data_specs
 	 * A List that specifies the outlines of the data to crawl
-	 * elements -> A list with the specifications: [String sql_create_sheet, 
-	 * 											    String table_name, 
-	 * 											    boolean simple_table,
-	 * 											    int nr_of_values, 
-	 * 											    int step_size
-	 * 												Matcher matcher]
+	 * elements -> A hash Map with the specifications: [String sql_create_sheet,       #the sql create sheet has the sql command to create the table
+	 * 											    	String table_name, 
+	 * 													Matcher matcher,
+	 * 											    	boolean simple_table,
+	 * 													String raw_link,               #link to the site where the links are fetched from
+	 * 											    	int nr_of_values, 
+	 * 											    	int step_size
+	 * 													]
 	 */
 	private static ArrayList<HashMap<String, Object>> data_specs = new ArrayList<HashMap<String, Object>>() {{
 		   add(new HashMap<String, Object>() {{
@@ -185,7 +196,8 @@ public class WrestlingScraper {
 				sql_to_insert += ", `" + db_field_name + "`";
 			}
 		}
-		
+		 
+		// put the sql command together and execute the query
 		String sql = "INSERT INTO `wrestling`.`" + table + "` (" + sql_to_insert + ") VALUES (" + sql_values + ");";
 		PreparedStatement stmt = db.conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		stmt.execute();

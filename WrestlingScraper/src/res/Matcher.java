@@ -3,6 +3,13 @@ package res;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * 
+ * The Matcher, maps the labels of the website to the corresponding field in the db.
+ *
+ *
+ */
 public class Matcher {
 	
 	protected Map<String, String> map; 
