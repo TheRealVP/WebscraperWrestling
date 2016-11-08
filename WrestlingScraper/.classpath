@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JenaLibs"/>
 	<classpathentry kind="lib" path="/Users/Jolan/Documents/learn/semanticWeb/jsoup-1.9.2.jar"/>
 	<classpathentry kind="lib" path="/Users/Jolan/Documents/learn/semanticWeb/mysql-connector-java-5.1.40/mysql-connector-java-5.1.40-bin.jar"/>
 	<classpathentry kind="lib" path="/Users/Jolan/Documents/learn/semanticWeb/commons-lang3-3.5/commons-lang3-3.5.jar"/>

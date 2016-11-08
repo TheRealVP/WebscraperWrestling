@@ -10,6 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.jena.ontology.Individual;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.util.FileManager;
 import org.jsoup.Jsoup;
 import org.jsoup.examples.HtmlToPlainText;
 import org.jsoup.nodes.Document;
@@ -18,6 +25,7 @@ import org.jsoup.select.Elements;
 
 import database.DB;
 import res.Matcher;
+import res.MatcherEvents;
 import res.MatcherPromotions;
 import res.MatcherWorkers;
 
@@ -30,8 +38,6 @@ import res.MatcherWorkers;
  * The Scraper doesn't have to fetch all the data at once, but can pick up at a point until where the db is filled. (very basic)
  */
 public class WrestlingScraper {
-	private static DB db;
-	private static Matcher matcher;
 	private static HtmlToPlainText htmlPlain; // to convert html to plain text which can be added to the db
 	
 	/* data_specs
@@ -47,92 +53,64 @@ public class WrestlingScraper {
 	 */
 	private static ArrayList<HashMap<String, Object>> data_specs = new ArrayList<HashMap<String, Object>>() {{
 		   add(new HashMap<String, Object>() {{
-			   put("sql_sheet", "sql_create_promotions.txt");
-		   	   put("table_name", "Promotions");
 		   	   put("matcher", new MatcherPromotions());
-		   	   put("simple_table", true);
+		   	   put("name", "Promotion");
 		   	   put("raw_link", "http://www.cagematch.net/?id=8&view=promotions");
-		   	   put("nr_elements", new Integer(1866));
+		   	   put("nr_elements", new Integer(2));
 		   	   put("step_size", new Integer(100));
+		   	   put("appendix", "&s=");
+		   	   put("appendix_element", ""); // appendix during crawling of single elements
 		    }});
 		   add(new HashMap<String, Object>() {{
-			   put("sql_sheet", "sql_create_workers.txt");
-		   	   put("table_name", "Workers");
 		   	   put("matcher", new MatcherWorkers());
-		   	   put("simple_table", true);
-		   	put("raw_link", "http://www.cagematch.net/?id=2&view=workers");
-		   	   put("nr_elements", new Integer(17760));
-		   	   put("step_size", new Integer(100));
+		   	   put("name", "Worker");
+		   	   put("raw_link", "http://www.cagematch.net/?id=2&view=workers");
+		   	   put("nr_elements", new Integer(2));
+		   	   put("step_size", new Integer(2));
+		   	   put("appendix", "&s=");
+		   	   put("appendix_element", ""); // appendix during crawling of single elements
+			}});
+		   add(new HashMap<String, Object>() {{
+		   	   put("matcher", new MatcherEvents());
+		   	   put("name", "Event");
+		   	   put("raw_link", "http://www.cagematch.net/?id=1&view=results");
+		   	   put("nr_elements", new Integer(2));
+		   	   put("step_size", new Integer(2));
+		   	   put("appendix", "&s="); // appendix during link extraction
+		   	   put("appendix_element", ""); // appendix during crawling of single elements
 			}});
 		   
 		}};
-
-	int[] a = {1,1,2};
 		
 	public static void main(String[] args) {
 		
 		// establish connection to the database
-		db = new DB();
 		//create the tables in database if they don't already exist
-		try {
-			for(HashMap<String, Object> specs : data_specs) {
-				db.createTableFromTxt("src/res/" + specs.get("sql_sheet"));
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		/*
-		 * Go through the data_specs and crawl/scrape all the information
-		 */
-		try {
-			for(HashMap<String, Object> specs : data_specs) {
-				
-				// First get number of rows in table
-				int count = 0;
-				PreparedStatement stmtCount = db.conn.prepareStatement("SELECT COUNT(*) AS total FROM " + specs.get("table_name"));
-				ResultSet rs = stmtCount.executeQuery();
-				while(rs.next()) {
-					count = rs.getInt("total");
+
+		
+
+		for(HashMap<String, Object> specs : data_specs) {
+			
+			
+			// Data has to be crawled. But if there already is some, start there!
+			//first extract the links, where to crawl
+			System.out.println("--- '" + specs.get("name") + " ---");
+			List<String> links = getLinksFromMultiSiteTable((String) specs.get("raw_link"),
+					(String) specs.get("appendix"),
+					(Integer) specs.get("step_size"),
+					(Integer) specs.get("nr_elements"));
+			
+			System.out.println("Retrieved links for '" + specs.get("name") + "'");
+			
+			int j = 0;
+			for(String link : links) {
+				if(j%100 == 0) {
+					System.out.print("Data Extraction: " + ((float )j)/ (Integer) specs.get("nr_elements") + "%   \r");
 				}
-				if(count >= (Integer) specs.get("nr_elements")) {
-					// all the data is already crawled/scraped
-					System.out.println("'" + specs.get("table_name") + "' data alrady found!");
-				} else {
-					// Data has to be crawled. But if there already is some, start there!
-					//first extract the links, where to crawl
-					System.out.println("--- '" + specs.get("table_name") + "' starts at " + Integer.toString(count) + " ---");
-					List<String> links = getLinksFromMultiSiteTable((String) specs.get("raw_link"),
-							"&s=",
-							count - 1, 
-							(Integer) specs.get("step_size"),
-							(Integer) specs.get("nr_elements"));
-					
-					System.out.println("Retrieved links for '" + specs.get("table_name") + "'");
-					
-					int j = 0;
-					for(String link : links) {
-						if(j%100 == 0) {
-							System.out.print("Data Extraction: " + ((float )j)/ (Integer) specs.get("nr_elements") + "%   \r");
-						}
-						try {
-							extractOverviewTableData(link, (String) specs.get("table_name"), (Matcher) specs.get("matcher"));
-							j++;
-						} catch (SQLException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}
-				
+				extractOverviewTableData(link, (String) specs.get("appendix_element"), (String) specs.get("table_name"), (Matcher) specs.get("matcher"));
+				j++;
 			}
-		} catch (SQLException e2) {
-			// TODO Auto-generated catch block
-			System.out.println("Error!");
-			e2.printStackTrace();
+			
 		}
 		
 		
@@ -149,18 +127,17 @@ public class WrestlingScraper {
 	 * @param stepSize : the step size of the table
 	 * @return a list with links to all the elements of the table (e.g. Workers, Promotions etc.)
 	 */
-	public static List<String> getLinksFromMultiSiteTable(String link, String appendix, int start, int stepSize, int numberOfElements) {
+	public static List<String> getLinksFromMultiSiteTable(String link, String appendix, int stepSize, int numberOfElements) {
 		List<String> links = new ArrayList<String>();
 		Document document = null;
 		//after the first batch a appendix + step size is needed to connect to the link
-		for(int i=start;i <= numberOfElements; i += stepSize) {
-			System.out.print("Link Extraction: " + ((float )i)/numberOfElements + "% \r");
+		for(int i=0;i <= numberOfElements; i += stepSize) {
+			System.out.print("Link Extraction : " + ((float )i)/numberOfElements + "% \r");
 			try {
 				document = Jsoup.connect(link+appendix+Integer.toString(i)).timeout(20 * 1000).get();
 				
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.out.println(link+appendix+Integer.toString(i));
 			}
 			Elements rows = document.getElementsByClass("TRow");
 			for(Element row : rows) {
@@ -177,30 +154,27 @@ public class WrestlingScraper {
 	 * @param link : link to the site with the overview
 	 * @throws SQLException if a problem with the sql connection arises
 	 */
-	public static void extractOverviewTableData(String link, String table, Matcher matcher) throws SQLException {
+	public static void extractOverviewTableData(String link, String appendix, String table, Matcher matcher) {
 		Document document = null;
-		String db_field_name, value;
-		String sql_to_insert = "`url`";
-		String sql_values = "\"" + link + "\"";
+		String field_name;
+		String value;
 		try {
-			document = Jsoup.connect(link).timeout(20*1000).get();
+			document = Jsoup.connect(link + appendix).timeout(20*1000).get();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		Elements rows = document.getElementsByClass("InformationBoxRow");
 		for(Element row : rows) {
-			db_field_name = matcher.match(row.child(0).text());
-			if (db_field_name != null) {
+			field_name = matcher.match(row.child(0).text());
+			if (field_name != null) {
 				value = StringEscapeUtils.escapeHtml4(row.child(1).text());
-				sql_values += ", \"" + value + "\"";
-				sql_to_insert += ", `" + db_field_name + "`";
+				
+//				System.out.print
+				
 			}
 		}
-		 
-		// put the sql command together and execute the query
-		String sql = "INSERT INTO `wrestling`.`" + table + "` (" + sql_to_insert + ") VALUES (" + sql_values + ");";
-		PreparedStatement stmt = db.conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-		stmt.execute();
 	}
+	
+	
 
 }
