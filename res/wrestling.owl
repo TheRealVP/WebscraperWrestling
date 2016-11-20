@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#"
+     xml:base="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Belt -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Belt"/>
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Card -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Card"/>
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Distributor -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Distributor"/>
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Event -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Event">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Card"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Human -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Human"/>
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#PPV -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#PPV">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Distributor"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Promoter -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Promoter">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Human"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Promotion -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Promotion"/>
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Show -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Show">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Card"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Stable -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Stable"/>
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#TVNetwork -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#TVNetwork">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Distributor"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Venue -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Venue">
+        <rdfs:comment>Maybe use an already existing Ontology for this part</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Wrestler -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Wrestler">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Human"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Match/Fight -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Match/Fight"/>
+    
+
+
+    <!-- http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Stream??? -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Stream???">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8#Distributor"/>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.2.5.20160517-0735) https://github.com/owlcs/owlapi -->
+

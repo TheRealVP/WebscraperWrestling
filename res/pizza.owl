@@ -1,0 +1,29 @@
+//		OntModel model = getModel();
+//		
+//		OntClass attack = model.getOntClass( "#" + "Wrestler" );
+//		Individual johnCena = model.createIndividual( "#" + "JohnCena", attack );
+//		
+//		model.write( System.out, "Turtle" );
+//		
+
+
+//	public static OntModel getModel() {
+//		String SOURCE_URL = "http://www.semanticweb.org/jolan/ontologies/2016/9/untitled-ontology-8";
+//		String SOURCE_FILE = "/Users/Jolan/git/LocalWrestlingScraper/WrestlingScraper/src/res/wrestling.owl";
+//		
+//		
+//		final String NS = SOURCE_URL + "#";
+//		
+//		OntModel m = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM );
+//		
+//		FileManager.get().getLocationMapper().addAltEntry( SOURCE_URL, SOURCE_FILE );
+//		Model baseOntology = FileManager.get().loadModel( SOURCE_URL );
+//        m.addSubModel( baseOntology );
+//
+//        // for compactness, add a prefix declaration st: (for Sam Thomas)
+//        m.setNsPrefix( "wo", NS );
+//		
+//		return m;
+//		
+//		
+//	}
