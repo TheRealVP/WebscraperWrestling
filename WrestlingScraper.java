@@ -64,7 +64,7 @@ public class WrestlingScraper {								/*WATCH OUT FOR  VVV */
 	private static int entityExtracted;
 
 	private static ArrayList<HashMap<String, Object>> data_specs = new ArrayList<HashMap<String, Object>>() {{
-/*		add(new HashMap<String, Object>() {{
+		add(new HashMap<String, Object>() {{
 			put("matcher", new MatcherPromotions());
 			put("name", "Promotion");
 			put("raw_link", "http://www.cagematch.net/?id=8&view=promotions");
@@ -100,7 +100,7 @@ public class WrestlingScraper {								/*WATCH OUT FOR  VVV */
 			put("appendix", "&s=");
 			put("appendix_element", ""); // appendix during crawling of single elements
 		}});
-		add(new HashMap<String, Object>() {{
+	/*	add(new HashMap<String, Object>() {{
 			put("matcher", new MatcherTeams());
 			put("name", "TagTeam");
 			put("raw_link", "http://www.cagematch.net/?id=28");
@@ -108,7 +108,7 @@ public class WrestlingScraper {								/*WATCH OUT FOR  VVV */
 			put("step_size", new Integer(2));
 			put("appendix", "&s=");
 			put("appendix_element", ""); // appendix during crawling of single elements
-		}});
+		}});*/
 	}};
 
 	public static void main(String[] args) {
@@ -279,10 +279,28 @@ public class WrestlingScraper {								/*WATCH OUT FOR  VVV */
 
 							break;
 						case "owners":
-							Individual owner=m.createIndividual(NS +"#"+value, m.getOntClass(NS +"#Owner"));
-							owner.addProperty(m.getProperty(NS + "#hasName"),value);
-							promo.addProperty(m.getProperty(NS + "#hasOwner"),owner);
+							tk= new StringTokenizer(value,",");
 
+
+							while(tk.hasMoreTokens())
+							{	token=tk.nextToken();
+								StringTokenizer ihateregex= new StringTokenizer(token,"(");
+								
+								token= ihateregex.nextToken();
+								token=token.trim();
+								if(m.getIndividual(NS+"#"+token)==null)
+								{
+									Individual owner=m.createIndividual(NS +"#"+token, m.getOntClass(NS +"#Owner"));
+									owner.addProperty(m.getProperty(NS + "#hasName"),token);
+									promo.addProperty(m.getProperty(NS + "#hasOwner"),owner);
+								}
+								else
+								{
+									m.getIndividual(NS+"#"+token).addProperty(m.getProperty(NS + "#hasName"),token);
+									promo.addProperty(m.getProperty(NS + "#hasOwner"),m.getIndividual(NS+"#"+token));
+								}
+									
+							}
 							break;
 						case "popular_events":
 							tk= new StringTokenizer(value,",");
@@ -291,6 +309,7 @@ public class WrestlingScraper {								/*WATCH OUT FOR  VVV */
 							while(tk.hasMoreTokens())
 							{
 								token=tk.nextToken();
+								token= token.trim();
 								Individual event=m.createIndividual(NS +"#"+token, m.getOntClass(NS +"#Event"));
 								event.addProperty(m.getProperty(NS + "#hasName"),token);
 								promo.addProperty(m.getProperty(NS + "#hasEvent"),event);
@@ -303,6 +322,7 @@ public class WrestlingScraper {								/*WATCH OUT FOR  VVV */
 							while(tk.hasMoreTokens())
 							{
 								token=tk.nextToken();
+								token= token.trim();
 								Individual event=m.createIndividual(NS +"#"+token, m.getOntClass(NS +"#Show"));
 								event.addProperty(m.getProperty(NS + "#hasName"),token);
 								promo.addProperty(m.getProperty(NS + "#hasShow"),event);
@@ -362,6 +382,7 @@ public class WrestlingScraper {								/*WATCH OUT FOR  VVV */
 							while(tk.hasMoreTokens())
 							{
 								token=tk.nextToken();
+								token= token.trim();
 								if(m.getIndividual(NS+"#"+token)!=null)
 								{
 									rassler.addProperty(m.getProperty(NS+"#isRelated"), m.getIndividual(NS+"#"+token));
@@ -382,6 +403,7 @@ public class WrestlingScraper {								/*WATCH OUT FOR  VVV */
 							while(tk.hasMoreTokens())
 							{
 								token=tk.nextToken();
+								token= token.trim();
 								if(m.getIndividual(NS+"#"+token)!=null)
 								{
 									rassler.addProperty(m.getProperty(NS+"#isAlterEgo"), m.getIndividual(NS+"#"+value));
@@ -427,6 +449,7 @@ public class WrestlingScraper {								/*WATCH OUT FOR  VVV */
 							while(tk.hasMoreTokens())
 							{
 								token=tk.nextToken();
+								token= token.trim();
 								rassler.addProperty(m.getProperty(NS + "#hasNickname"), value);
 							}
 							break;
@@ -490,6 +513,7 @@ public class WrestlingScraper {								/*WATCH OUT FOR  VVV */
 							while(tk.hasMoreTokens())
 							{
 								token=tk.nextToken();
+								token=token.trim();
 								if(m.getIndividual(NS+"#"+token)!=null)
 									title.addProperty(m.getProperty(NS + "#hasPromotion"), m.getIndividual(NS+"#"+token));
 								else
@@ -550,10 +574,80 @@ public class WrestlingScraper {								/*WATCH OUT FOR  VVV */
 
 			for(Element row : holders)
 			{
-				String aargh= row.getElementsByClass("TextBold").text();
-				StringTokenizer goaway= new StringTokenizer(aargh, "(");
-				if(goaway.countTokens()>1)
+				String[] members=null;
+				String text= row.getElementsByClass("TextBold").text();
+				text = text.replaceAll("\\[([0-9])+\\]", "");
+				System.out.println(text);
+				String teamName = "";
+				if(text.contains("&")) {
+					String innerBrackets = text;
+					if(text.contains("(")) {
+						teamName = text.split(" \\(")[0];
+						innerBrackets = text.split("\\(")[1].split("\\)")[0];
+					} 
+					members = innerBrackets.split(" & |, ");
+					
+				}
+				if(members!=null)
 				{
+					System.out.println("Team Name: "+teamName);
+					if(teamName!="" && m.getIndividual(NS+"#"+teamName.replaceAll("%","percent"))==null)
+					{
+						team= m.createIndividual(NS + "#"+ teamName.replaceAll("%","percent"), m.getOntClass(NS +"#Team"));
+						
+						team.addProperty(m.getProperty(NS + "#hasName"), teamName);
+					}
+					else if(m.getIndividual(NS+"#"+teamName.replaceAll("%","percent"))!=null)
+						team= m.getIndividual(NS+"#"+teamName.replaceAll("%","percent"));
+					for(String me: members) {
+
+						System.out.println(me);
+						
+						if(m.getIndividual(NS+"#"+me)!=null)
+						{
+							
+							m.getIndividual(NS+"#"+me).addProperty(m.getProperty(NS+"#hasTitle"), title);
+							if(m.getIndividual(NS+"#"+teamName.replaceAll("%","percent"))!=null)
+								team.addProperty(m.getProperty(NS+"#hasPerson"), m.getIndividual(NS+"#"+me));
+						}
+						else
+						{
+
+							Individual noob= m.createIndividual(NS + "#"+ me.replaceAll("%","percent"), m.getOntClass(NS +"#Wrestler"));
+							noob.addProperty(m.getProperty(NS + "#hasName"), me);
+							noob.addProperty(m.getProperty(NS+"#hasTitle"), title);
+							if(teamName!="")
+								team.addProperty(m.getProperty(NS+"#hasPerson"), noob);
+
+						}
+						
+					}
+				}
+				else
+				{
+					StringTokenizer goaway= new StringTokenizer(text, "(");
+					text= goaway.nextToken();
+					if(m.getIndividual(NS+"#"+text)!=null)
+					{
+						m.getIndividual(NS+"#"+text).addProperty(m.getProperty(NS+"#hasTitle"), title);
+					}
+					else
+					{
+
+						Individual noob= m.createIndividual(NS + "#"+ text.replaceAll("%","percent"), m.getOntClass(NS +"#Wrestler"));
+						noob.addProperty(m.getProperty(NS + "#hasName"), text);
+						noob.addProperty(m.getProperty(NS+"#hasTitle"), title);
+					
+					}
+				}
+/*				String aargh= row.getElementsByClass("TextBold").text();
+				StringTokenizer goaway= new StringTokenizer(aargh, "&(");
+				if(aargh.indexOf('(')==-1) // and some will have a stupid team name too..
+					goaway.nextToken(); // which we have to get rid of
+				while(goaway.hasMoreTokens())
+					{
+						
+					
 					String actualname= goaway.nextToken();
 					if(m.getIndividual(NS+"#"+actualname)!=null)
 					{
@@ -565,8 +659,12 @@ public class WrestlingScraper {								/*WATCH OUT FOR  VVV */
 						Individual noob= m.createIndividual(NS + "#"+ actualname.replaceAll("%","percent"), m.getOntClass(NS +"#Wrestler"));
 						noob.addProperty(m.getProperty(NS + "#hasName"), actualname);
 						noob.addProperty(m.getProperty(NS+"#hasTitle"), title);
+					
 					}
-				}
+				}*/
+					
+
+					
 			}
 		}
 		if(entityExtracted==4)
@@ -589,3 +687,20 @@ public class WrestlingScraper {								/*WATCH OUT FOR  VVV */
 		}
 	}
 }
+
+/*members = null;
+String text = "The New Day (Big E, Kofi Kingston & Xavier Woods) (2)";
+String teamName = "";
+if(text.contains("&")) {
+	String innerBrackets = text;
+	if(text.contains("(")) {
+		teamName = text.split(" \\(")[0];
+		innerBrackets = text.split("\\(")[1].split("\\)")[0];
+	} 
+	members = innerBrackets.split(" & |, ");
+}
+
+for(String m: members) {
+	System.out.println(m);
+}
+System.out.println("Team Name: "+teamName);*/
